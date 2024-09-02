@@ -1,0 +1,32 @@
+# ==========
+# RUFF
+# ==========
+
+[tool.ruff]
+target-version = "py312"
+
+line-length = 79
+
+fix = true
+
+[tool.ruff.format]
+# use \n for line endings (Unix standard)
+line-ending = "lf"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+  # for compatibility with the Ruff formatter
+  "W191", "E111", "E114", "E117", "D206", "D300", "Q000", "Q001", "Q002", "Q003", "COM812", "COM819", "ISC001", "ISC002",
+  # type annotation for self and cls
+  "ANN101", "ANN102"
+]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 72
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.pylint]
+max-args = 10

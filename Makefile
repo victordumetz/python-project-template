@@ -32,11 +32,39 @@ VENV_ACTIVATE = $(VENV_DIR)/bin/activate
 .PHONY : init
 init :
 	$(MAKE) install-requirements
+	$(MAKE) set-ruff-target-version
+	$(MAKE) install-pre-commit-hooks
 
 # clear the repository
 .PHONY : clear
 clear :
 	rm -rf .python-version requirements.txt venv
+
+
+# ==========
+# RUFF LINTING & FORMATTING
+# ==========
+
+# lint and format
+.PHONY : lint-format
+lint-format : | $(VENV_ACTIVATE)
+	$(MAKE) lint
+	$(MAKE) format
+
+# lint
+.PHONY : lint
+lint : | $(VENV_ACTIVATE)
+	. $(VENV_ACTIVATE) && ruff check
+
+# format
+.PHONY : format
+format : | $(VENV_ACTIVATE)
+	. $(VENV_ACTIVATE) && ruff format
+
+# set Ruff `target-version`
+.PHONY : set-ruff-target-version
+set-ruff-target-version : $(PYTHON_VERSION_FILE)
+	sed -r -i "" "s/^(target-version = ).*$$/\1\"$(RUFF_TARGET_VERSION)\"/g" "pyproject.toml"
 
 
 # ==========
@@ -47,6 +75,7 @@ clear :
 .PHONY : install-requirements
 install-requirements : $(COMPILED_REQUIREMENTS_FILE)
 	. $(VENV_ACTIVATE) && pip-sync
+	$(MAKE) install-pre-commit-hooks
 
 # compile requirements
 $(COMPILED_REQUIREMENTS_FILE) : $(REQUIREMENTS_FILES) | $(VENV_ACTIVATE)
@@ -65,3 +94,20 @@ $(PYTHON_VERSION_FILE) : | $(PYENV_PYTHON)
 # install Python version
 $(PYENV_PYTHON) :
 	arch -arm64 pyenv install --skip-existing $(PYTHON_VERSION)
+
+
+# ==========
+# PRE-COMMIT
+# ==========
+
+# install pre-commit hooks
+.PHONY : install-pre-commit-hooks
+install-pre-commit-hooks : $(COMPILED_REQUIREMENTS_FILE) | $(VENV_ACTIVATE)
+	$(MAKE) set-pre-commit-ruff-version
+	. $(VENV_ACTIVATE) && pre-commit install
+
+# set Ruff version based on requirements.txt
+.PHONY : set-pre-commit-ruff-version
+set-pre-commit-ruff-version : RUFF_VERSION = $(shell sed -r -n "s/ruff==([[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)/\1/p" "requirements.txt")
+set-pre-commit-ruff-version : $(COMPILED_REQUIREMENTS_FILE)
+	perl -0777 -pi -e "s/(?<=ruff-pre-commit\n\s{4}rev:\sv)(\d+\.\d+\.\d+)/$(RUFF_VERSION)/g" ".pre-commit-config.yaml"

@@ -12,3 +12,6 @@ requirements.txt
 
 # virtual environment
 venv/
+
+# Ruff cache
+.ruff_cache/

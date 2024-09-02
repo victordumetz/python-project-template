@@ -29,3 +29,6 @@ Some additional Make rules are also implemented:
 
 - `clear`: reset the template (removes the virtual environment, the compiled `requirements.txt` and the `.python-version` file)
 - `install-requirements`: recompile `requirements.txt` and install the requirements
+- `lint-format`: lint and format the Python files with Ruff
+- `lint`: lint the Python files with Ruff
+- `format`: format the Python files with Ruff
