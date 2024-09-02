@@ -2,6 +2,7 @@ name: Enforce merging to `main` from `develop`
 
 on:
   pull_request:
+    types: [synchronize, opened, reopened, edited]
 
 jobs:
   check_merge_from_develop:
