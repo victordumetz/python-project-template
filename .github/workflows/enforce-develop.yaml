@@ -2,7 +2,6 @@ name: Enforce merging to `main` from `develop`
 
 on:
   pull_request:
-    branches: 'main'
 
 jobs:
   check_merge_from_develop:
