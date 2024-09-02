@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check merge from develop
-        if: github.head_ref != 'develop'
+        if: github.base_ref == 'main' && github.head_ref != 'develop'
         run: |
-          echo "ERROR: You can only merge to `main` from `develop`."
+          echo "ERROR: You can only merge to \`main\` from \`develop\`."
           exit 1
