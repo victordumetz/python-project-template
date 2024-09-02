@@ -30,3 +30,13 @@ convention = "numpy"
 
 [tool.ruff.lint.pylint]
 max-args = 10
+
+
+# ==========
+# PYTEST
+# ==========
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
