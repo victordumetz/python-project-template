@@ -1,0 +1,26 @@
+name: Continuous integration
+
+on: push
+
+jobs:
+  lint:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: victordumetz/python-project-template/.github/actions/setup-venv@v1
+
+      - name: Lint
+        run: ruff check --output-format=github .
+
+  test:
+    runs-on: 	macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: victordumetz/python-project-template/.github/actions/setup-venv@v1
+
+      - name: Run tests
+        run: pytest
