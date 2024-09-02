@@ -2,6 +2,15 @@
 
 A template for quickly starting a Python project.
 
+The setup automates:
+
+- installing a selected Python version using [pyenv](https://github.com/pyenv)
+- creating a virtual environment
+- setting up linting and formatting using [Ruff](https://astral.sh/ruff)
+- setting up testing using [pytest](https://pytest.org)
+- setting up pre-commit hooks for linting and formatting
+- setting up a CI worflow that runs linting and testing on push
+
 ## Motivation
 
 Setting up a Python environment can be time consuming and require the creation of many files. This template uses [GNU Make](https://www.gnu.org/software/make/) to automate this process, reducing the complexity of the initial configuration to the simple command `gmake init`.
