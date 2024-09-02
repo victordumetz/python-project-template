@@ -1,0 +1,5 @@
+# .git directory
+.git/
+
+# macOS
+.DS_Store
