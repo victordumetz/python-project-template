@@ -6,6 +6,9 @@
 # /!\ PYTHON_VERSION should include the release number (i.e. not 3.x, but 3.x.x)
 PYTHON_VERSION = 3.12.1
 
+# Python version without release number
+PYTHON_SHORT_VERSION = $(shell echo $(PYTHON_VERSION) | sed -r "s/^([[:digit:]]+\.[[:digit:]]+)\..*$$/\1/g")
+
 # Python version file
 PYTHON_VERSION_FILE = .python-version
 
@@ -34,6 +37,7 @@ init :
 	$(MAKE) install-requirements
 	$(MAKE) set-ruff-target-version
 	$(MAKE) install-pre-commit-hooks
+	$(MAKE) set-github-actions-python-version
 
 # clear the repository
 .PHONY : clear
@@ -111,3 +115,13 @@ install-pre-commit-hooks : $(COMPILED_REQUIREMENTS_FILE) | $(VENV_ACTIVATE)
 set-pre-commit-ruff-version : RUFF_VERSION = $(shell sed -r -n "s/ruff==([[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)/\1/p" "requirements.txt")
 set-pre-commit-ruff-version : $(COMPILED_REQUIREMENTS_FILE)
 	perl -0777 -pi -e "s/(?<=ruff-pre-commit\n\s{4}rev:\sv)(\d+\.\d+\.\d+)/$(RUFF_VERSION)/g" ".pre-commit-config.yaml"
+
+
+# ==========
+# GITHUB ACTIONS
+# ==========
+
+# set GitHub Actions `python-version`
+.PHONY : set-github-actions-python-version
+set-github-actions-python-version : $(COMPILED_REQUIREMENTS_FILE)
+	perl -0777 -pi -e "s/(?<=python-version:\s\')(\d+.\d+)(?=\')/$(PYTHON_SHORT_VERSION)/g" ".github/actions/setup-venv/action.yaml"

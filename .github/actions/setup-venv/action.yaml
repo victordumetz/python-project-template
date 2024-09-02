@@ -1,0 +1,48 @@
+name: Set up virtual environment
+description: 'Set up the virtual environment by either creating it or retrieving it from cache.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      id: setup_python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Restore cached virtual environment
+      id: cache_venv
+      uses: actions/cache/restore@v4
+      with:
+        path: venv
+        key: ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-${{ hashFiles('requirements*.in') }}
+
+    - name: Create virtual environment and install dependencies
+      if: steps.cache_venv.outputs.cache-hit != 'true'
+      run: |
+        python -m pip install -U pip virtualenv
+        python -m virtualenv venv
+        source venv/bin/activate
+        python -m pip install -U pip pip-tools
+        pip-compile --output-file=requirements.txt --strip-extras requirements.in requirements-dev.in
+        pip-sync
+      shell: bash
+
+    - name: Add GitHub Action Path to PATH
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+      shell: bash
+
+    - name: Add virtual environment to PATH
+      run: |
+        source venv/bin/activate
+        echo "$VIRTUAL_ENV/bin" >> $GITHUB_PATH
+        echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Save cached virtual environment
+      uses: actions/cache/save@v4
+      with:
+        path: venv
+        key: ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-${{ hashFiles('requirements*.in') }}
