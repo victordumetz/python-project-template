@@ -23,4 +23,4 @@ jobs:
       - uses: victordumetz/python-project-template/.github/actions/setup-venv@v1
 
       - name: Run tests
-        run: pytest
+        run: python -m pytest
