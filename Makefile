@@ -9,6 +9,9 @@ PYTHON_VERSION = 3.12.1
 # Python version without release number
 PYTHON_SHORT_VERSION = $(shell echo $(PYTHON_VERSION) | sed -r "s/^([[:digit:]]+\.[[:digit:]]+)\..*$$/\1/g")
 
+# Python version for Ruff
+PYTHON_RUFF_VERSION = $(shell echo $(PYTHON_VERSION) | sed -r "s/^([[:digit:]]+)\.([[:digit:]]+)\..*$$/py\1\2/g")
+
 # Python version file
 PYTHON_VERSION_FILE = .python-version
 
@@ -68,7 +71,7 @@ format : | $(VENV_ACTIVATE)
 # set Ruff `target-version`
 .PHONY : set-ruff-target-version
 set-ruff-target-version : $(PYTHON_VERSION_FILE)
-	sed -r -i "" "s/^(target-version = ).*$$/\1\"$(RUFF_TARGET_VERSION)\"/g" "pyproject.toml"
+	sed -r -i "" "s/^(target-version = ).*$$/\1\"$(PYTHON_RUFF_VERSION)\"/g" "pyproject.toml"
 
 
 # ==========
